@@ -1,6 +1,6 @@
 from selenium import webdriver
 from selenium.webdriver.common.by import By
-
+from db import MongoDriver
 
 driver = webdriver.Chrome()
 driver.get("https://ecuador.patiotuerca.com/")
@@ -12,6 +12,8 @@ search_button.click()
 
 vehicle_cards = driver.find_elements(By.CSS_SELECTOR, "#featuredUsed > div.xl3")
 
+mongodbC = MongoDriver()
+
 for card in vehicle_cards:
     try:
         title = card.find_element(By.CSS_SELECTOR, "div > div > div > div.card-info.card-content > div.module.tittle").text
@@ -20,12 +22,14 @@ for card in vehicle_cards:
         print(title)
         print(kms_y_city)
         print(f"${price}")
-        record = {
+
+        nwAuto = {
             "title": title,
             "kms_y_city": kms_y_city,
             "price": price
         }
-        print("++++++++++++++++++++++++++++++++")
+        mongodbC.insert_record(record=nwAuto,username="auto")
+        print("--------------------------------")
     except Exception as e:
         print(e)
         print("++++++++++++++++++++++++++++++++")
